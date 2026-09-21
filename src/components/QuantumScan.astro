@@ -1,0 +1,76 @@
+---
+// QuantumScan.astro — the hero's signature animated visual.
+//
+// This is currently a hand-built CSS/SVG animation (scanning rings, orbiting
+// "qubit" particles, converging data points, and algorithm tags). It's kept
+// as its own component so it's a clean drop-in point later: swap the
+// contents of the .scan-stage block below for a Rive canvas
+// (@rive-app/canvas) + a .riv file in /public/, without touching Hero.astro
+// or any other section. See README.md -> "Swapping in a Rive animation".
+---
+  <!-- SIGNATURE QUANTUM-SCAN ANIMATION -->
+  <div class="quantum-hero">
+    <div class="qbit-field" aria-hidden="true">
+      <span class="qbit-label mono" style="top:4%; left:2%; animation-delay:0s;">|0⟩</span>
+      <span class="qbit-label alt mono" style="top:12%; right:0%; animation-delay:1.1s;">ψ</span>
+      <span class="qbit-label mono" style="top:46%; left:-2%; animation-delay:2.2s;">0x4F3A</span>
+      <span class="qbit-label alt mono" style="bottom:20%; left:4%; animation-delay:3.3s;">|1⟩</span>
+      <span class="qbit-label mono" style="bottom:6%; right:6%; animation-delay:4.4s;">1101</span>
+      <span class="qbit-label alt mono" style="top:48%; right:-2%; animation-delay:5.5s;">λ</span>
+      <span class="qbit-label mono" style="top:78%; right:22%; animation-delay:2.8s;">0110</span>
+      <span class="qbit-label alt mono" style="top:8%; left:32%; animation-delay:6.2s;">qbit</span>
+    </div>
+
+    <div class="scan-stage" role="img" aria-label="Animated diagram of Qripty continuously scanning API traffic and tagging cryptographic algorithms as quantum-safe or at risk">
+      <div class="scan-glow"></div>
+      <div class="scan-ring dots scan-spin-slow"></div>
+      <div class="scan-ring scan-spin"></div>
+      <div class="scan-ring r2 scan-spin-rev"></div>
+      <div class="scan-ring r3 scan-spin"></div>
+      <div class="scan-sweep"></div>
+
+      <div class="qubit-orbit o1"><span class="qubit"></span></div>
+      <div class="qubit-orbit o2"><span class="qubit s"></span></div>
+      <div class="qubit-orbit o3"><span class="qubit s"></span></div>
+
+      <div class="data-stream" aria-hidden="true">
+        <div class="data-particle" style="transform:rotate(0deg);"><span class="dot" style="animation-delay:0s;"></span></div>
+        <div class="data-particle" style="transform:rotate(60deg);"><span class="dot" style="animation-delay:0.6s;"></span></div>
+        <div class="data-particle" style="transform:rotate(120deg);"><span class="dot" style="animation-delay:1.2s;"></span></div>
+        <div class="data-particle" style="transform:rotate(180deg);"><span class="dot" style="animation-delay:1.8s;"></span></div>
+        <div class="data-particle" style="transform:rotate(240deg);"><span class="dot" style="animation-delay:2.4s;"></span></div>
+        <div class="data-particle" style="transform:rotate(300deg);"><span class="dot" style="animation-delay:3s;"></span></div>
+      </div>
+
+      <div class="scan-core">
+        <svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="10.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="49.5 15.5" transform="rotate(-45 17 17)"/><circle cx="17" cy="17" r="6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="30 8" transform="rotate(135 17 17)"/><path d="M14.3 12.8 15.6 16.1 18.9 17.4 15.6 18.7 14.3 22 13 18.7 9.7 17.4 13 16.1Z" fill="#fff"/><line x1="21.5" y1="21.5" x2="28.5" y2="28.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="scan-tag risk t1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 11V8a6 6 0 1112 0v3M5 11h14v9H5z"/></svg>RSA-2048</div>
+      <div class="scan-tag safe t2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>ML-KEM</div>
+      <div class="scan-tag risk t3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 11V8a6 6 0 1112 0v3M5 11h14v9H5z"/></svg>ECDSA</div>
+      <div class="scan-tag safe t4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>TLS 1.3</div>
+      <div class="scan-tag safe t5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>X25519</div>
+    </div>
+
+    <p class="scan-caption"><strong>Continuous discovery</strong> — every algorithm across your API estate, tagged automatically</p>
+
+    <div class="scan-stats-row">
+      <div class="stat-card">
+        <svg class="ring-progress" width="48" height="48" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="21" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle id="scoreRing" cx="26" cy="26" r="21" fill="none" stroke="url(#ringGrad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="131.9" transform="rotate(-90 26 26)"/>
+          <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6B7CFF"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+        </svg>
+        <div><div class="stat-num"><span class="count" data-target="87">0</span>/100</div><div class="stat-label">Readiness score</div></div>
+      </div>
+      <div class="stat-card">
+        <span class="logomark" style="background:rgba(107,124,255,0.1);"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7CFF" stroke-width="2" width="18" height="18"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+        <div><div class="stat-num"><span class="count" data-target="95">0</span></div><div class="stat-label">APIs monitored</div></div>
+      </div>
+      <div class="stat-card">
+        <span class="logomark" style="background:rgba(0,212,161,0.12);"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" width="18" height="18"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+        <div><div class="stat-num">&lt; 1 day</div><div class="stat-label">to first CBOM</div></div>
+      </div>
+    </div>
+  </div>
