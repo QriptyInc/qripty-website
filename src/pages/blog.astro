@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+<Layout title="Blog — Qripty" description="Insights on quantum readiness, compliance, and API security from the Qripty team. Coming soon.">
+  <Nav />
+
+  <div class="page-hero">
+    <div class="eyebrow">From the Qripty Blog</div>
+    <h1>Insights on quantum readiness — coming soon.</h1>
+    <p>We're just getting started. Leave your email and we'll let you know the moment we publish.</p>
+  </div>
+
+  <section>
+    <div class="section-inner">
+      <div class="blog-notify-card reveal">
+        <form data-success="You're on the list — we'll email you the moment we publish." class="demo-form">
+          <div class="demo-input-row">
+            <svg class="demo-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <input type="email" class="demo-input" placeholder="you@company.com" required />
+            <button type="submit" class="demo-btn"><span>Notify Me</span></button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-header center reveal">
+        <div class="eyebrow">What We're Writing</div>
+        <h2 class="section-headline">A few of the topics on deck.</h2>
+      </div>
+      <div class="blog-topics-grid">
+        <div class="blog-topic-card reveal">
+          <div class="blog-topic-tag">Coming Soon</div>
+          <h3>A practical guide to PQC migration</h3>
+          <p>What a realistic hybrid post-quantum rollout looks like for a mid-size fintech API estate — and where teams usually get stuck.</p>
+        </div>
+        <div class="blog-topic-card reveal">
+          <div class="blog-topic-tag">Coming Soon</div>
+          <h3>Understanding your first CBOM</h3>
+          <p>What a cryptographic bill of materials actually contains, how to read one, and what to do with it once you have it.</p>
+        </div>
+        <div class="blog-topic-card reveal">
+          <div class="blog-topic-tag">Coming Soon</div>
+          <h3>RBI, SEBI, and what "readiness" means</h3>
+          <p>A plain-language look at where Indian financial regulation is headed on quantum risk, and how to get ahead of it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

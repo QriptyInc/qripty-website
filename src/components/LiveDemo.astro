@@ -1,0 +1,47 @@
+<!-- LIVE DEMO — the interactive scanner preview -->
+<section id="demo" class="demo-section">
+  <div class="section-inner">
+    <div class="section-header center">
+      <div class="eyebrow">Try It Live</div>
+      <h2 class="section-headline">See your API's quantum exposure — right now.</h2>
+      <p class="section-sub">Paste an API endpoint or an OpenAPI/Swagger URL below. Qripty scans the traffic and flags every cryptographic algorithm it finds.</p>
+    </div>
+
+    <div class="demo-card reveal">
+      <form class="demo-form" id="demoForm">
+        <div class="demo-input-row">
+          <svg class="demo-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.5-1.5"/></svg>
+          <input type="text" id="demoInput" class="demo-input" placeholder="https://api.yourcompany.com/v1 or a link to your OpenAPI spec" autocomplete="off" required />
+          <button type="submit" class="demo-btn" id="demoBtn">
+            <span>Scan for Quantum Risk</span>
+          </button>
+        </div>
+        <p class="demo-hint">No signup needed for this preview — and nothing you paste here is stored or shared.</p>
+      </form>
+
+      <div class="demo-scanning" id="demoScanning" hidden>
+        <div class="demo-scan-ring">
+          <div class="scan-ring scan-spin"></div>
+          <div class="scan-ring r2 scan-spin-rev" style="inset:14px;"></div>
+          <div class="demo-scan-core">
+            <svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="10.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="49.5 15.5" transform="rotate(-45 17 17)"/><circle cx="17" cy="17" r="6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="30 8" transform="rotate(135 17 17)"/><path d="M14.3 12.8 15.6 16.1 18.9 17.4 15.6 18.7 14.3 22 13 18.7 9.7 17.4 13 16.1Z" fill="#fff"/><line x1="21.5" y1="21.5" x2="28.5" y2="28.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <p class="demo-scan-status" id="demoScanStatus">Connecting to endpoint…</p>
+      </div>
+
+      <div class="demo-result" id="demoResult" hidden>
+        <div class="demo-result-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.4"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3>Your endpoint is queued for a full scan.</h3>
+        <p>We're still wiring up live results end-to-end — leave your email and we'll send your quantum readiness report the moment it's ready.</p>
+        <div class="demo-email-row">
+          <input type="email" class="demo-input" id="demoEmail" placeholder="you@company.com" />
+          <button type="button" class="demo-btn" id="demoEmailBtn"><span>Notify Me</span></button>
+        </div>
+        <button type="button" class="demo-reset" id="demoReset">Scan another endpoint</button>
+      </div>
+    </div>
+  </div>
+</section>

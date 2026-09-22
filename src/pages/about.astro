@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+<Layout title="About — Qripty" description="Qripty exists to make quantum readiness a solved problem for fintech, not a fire drill. Here's what we believe and how we work.">
+  <Nav />
+
+  <div class="page-hero">
+    <div class="eyebrow">About Qripty</div>
+    <h1>Built for the cryptography shift fintech can't ignore.</h1>
+    <p>Post-quantum cryptography standards are finalized. Regulators are starting to ask questions. Qripty exists so that when they do, the answer is already sitting in a dashboard — not buried in a six-month audit.</p>
+  </div>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-header center reveal">
+        <div class="eyebrow">Our Approach</div>
+        <h2 class="section-headline">A few things we believe.</h2>
+        <p class="section-sub">These shape every product decision we make.</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card reveal">
+          <div class="trust-icon purple">🔍</div>
+          <h3>Visibility comes first</h3>
+          <p>You can't protect what you can't see. Every organization we work with starts with a cryptographic inventory — before any protection, before any compliance report.</p>
+        </div>
+        <div class="trust-card reveal">
+          <div class="trust-icon green">🛡️</div>
+          <h3>Migration shouldn't mean disruption</h3>
+          <p>Application teams have enough to ship. Quantum readiness should happen at the infrastructure layer, without a single line of application code changing.</p>
+        </div>
+        <div class="trust-card reveal">
+          <div class="trust-icon violet">📋</div>
+          <h3>Compliance is a byproduct, not a project</h3>
+          <p>If the inventory and the protection are already in place, the audit trail and the regulatory report should fall out of the system automatically — not become their own initiative.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="final-cta">
+    <div class="eyebrow" style="margin-bottom:14px;">Get Started</div>
+    <h2>See where your APIs stand today.</h2>
+    <p>Run a live scan and get a first look at your cryptographic exposure — no signup required for the preview.</p>
+    <div class="final-ctas">
+      <a href="/#demo" class="btn-hero-primary">Get Risk Assessment</a>
+      <a href="/contact" class="btn-hero-secondary">Contact Us</a>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
