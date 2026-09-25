@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output and Astro's generated cache/types
+dist/
+.astro/
+
+# local env files (secrets / per-machine). .env.development is committed: it
+# only points `npm run dev` at a local scanner and holds no secrets.
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Vercel CLI link and local settings
+.vercel/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
