@@ -459,6 +459,29 @@ const {
     transition: all 0.2s; white-space: nowrap;
   }
   .demo-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(107,124,255,0.4); }
+  .demo-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 0 auto 10px; max-width: 520px; }
+  .demo-stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 10px; }
+  .demo-stat b { display: block; font-family: 'Inter Tight', sans-serif; font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+  .demo-stat span { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .demo-stat.warn b { color: var(--warn); }
+  .demo-stat.ok b { color: #059669; }
+  .demo-result .demo-stats-note { font-size: 12px; margin: 0 auto 4px; }
+  .demo-gate { margin: 22px auto 14px; padding-top: 22px; border-top: 1px solid var(--border-light); text-align: left; max-width: 520px; }
+  .demo-gate h4 { font-family: 'Inter Tight', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 6px; }
+  .demo-gate p { text-align: center; margin: 0 auto 16px; }
+  .demo-lead-done { text-align: center; }
+  .demo-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .demo-field {
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 14.5px; color: var(--text);
+    border: 1.5px solid var(--border); border-radius: calc(var(--radius) - 4px);
+    padding: 12px 14px; background: var(--bg); min-width: 0;
+  }
+  .demo-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(107,124,255,0.1); }
+  .demo-field::placeholder { color: #9CA3AF; }
+  .demo-field-wide { grid-column: 1 / -1; }
+  .demo-consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.5; cursor: pointer; }
+  .demo-consent input { margin-top: 3px; flex-shrink: 0; accent-color: var(--primary); }
+  .demo-submit { width: 100%; margin-top: 16px; padding: 14px 20px; }
   .demo-hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px; }
 
   .demo-scanning { text-align: center; padding: 12px 0 4px; }
@@ -471,6 +494,19 @@ const {
     box-shadow: 0 0 0 6px rgba(107,124,255,0.1);
   }
   .demo-scan-core svg { width: 20px; height: 20px; }
+  .demo-progress { height: 10px; max-width: 360px; margin: 14px auto 6px; border-radius: 100px; background: var(--border-light); border: 1px solid var(--border); overflow: hidden; }
+  .demo-progress-fill {
+    position: relative; height: 100%; width: 0%; border-radius: 100px; overflow: hidden;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .demo-progress-fill::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+    transform: translateX(-100%); animation: progressShine 1.6s ease-in-out infinite;
+  }
+  @keyframes progressShine { to { transform: translateX(100%); } }
+  .demo-progress-pct { font-size: 12.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
   .demo-scan-status { font-size: 13.5px; font-weight: 600; color: var(--primary); }
 
   .demo-result { text-align: center; padding: 6px 0 4px; }
@@ -618,6 +654,8 @@ const {
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+    .demo-progress-fill { transition: none; }
+    .demo-progress-fill::after { animation: none; display: none; }
     .scan-spin, .scan-spin-rev, .scan-spin-slow, .scan-sweep, .scan-core, .scan-core::after,
     .scan-tag, .qubit-orbit, .data-particle .dot, .qbit-label, .scan-glow,
     .footer-circuit .fc-line, .footer-circuit .fc-node { animation: none !important; opacity: 1 !important; }
@@ -658,6 +696,7 @@ const {
     .scan-stats-row { gap: 10px; }
     .stat-card { min-width: 130px; padding: 12px 14px; }
     .demo-card { padding: 24px 20px; }
+    .demo-fields { grid-template-columns: 1fr; }
     .demo-input-row { flex-wrap: wrap; padding: 12px; }
     .demo-input { width: 100%; order: 1; padding: 6px 0; }
     .demo-input-icon { order: 0; }

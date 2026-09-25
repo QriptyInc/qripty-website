@@ -4,19 +4,20 @@
     <div class="section-header center">
       <div class="eyebrow">Try It Live</div>
       <h2 class="section-headline">See your API's quantum exposure — right now.</h2>
-      <p class="section-sub">Paste an API endpoint or an OpenAPI/Swagger URL below. Qripty scans the traffic and flags every cryptographic algorithm it finds.</p>
+      <p class="section-sub">Enter your domain below. Qripty discovers your internet-facing hosts and scans their cryptography — no install, no access to your infrastructure.</p>
     </div>
 
     <div class="demo-card reveal">
       <form class="demo-form" id="demoForm">
         <div class="demo-input-row">
           <svg class="demo-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.5-1.5"/></svg>
-          <input type="text" id="demoInput" class="demo-input" placeholder="https://api.yourcompany.com/v1 or a link to your OpenAPI spec" autocomplete="off" required />
+          <input type="text" id="demoInput" class="demo-input" placeholder="yourcompany.com" autocomplete="off" required />
           <button type="submit" class="demo-btn" id="demoBtn">
             <span>Scan for Quantum Risk</span>
           </button>
         </div>
-        <p class="demo-hint">No signup needed for this preview — and nothing you paste here is stored or shared.</p>
+        <p class="demo-hint">No signup needed — free scan. You'll see a summary right away.</p>
+        <p class="demo-hint" id="demoError" style="color:#c0392b;" hidden></p>
       </form>
 
       <div class="demo-scanning" id="demoScanning" hidden>
@@ -28,19 +29,45 @@
           </div>
         </div>
         <p class="demo-scan-status" id="demoScanStatus">Connecting to endpoint…</p>
+        <div class="demo-progress" id="demoProgress" role="progressbar" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="demo-progress-fill" id="demoProgressFill"></div>
+        </div>
+        <p class="demo-progress-pct" id="demoProgressPct">0%</p>
       </div>
 
       <div class="demo-result" id="demoResult" hidden>
         <div class="demo-result-icon">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.4"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <h3>Your endpoint is queued for a full scan.</h3>
-        <p>We're still wiring up live results end-to-end — leave your email and we'll send your quantum readiness report the moment it's ready.</p>
-        <div class="demo-email-row">
-          <input type="email" class="demo-input" id="demoEmail" placeholder="you@company.com" />
-          <button type="button" class="demo-btn" id="demoEmailBtn"><span>Notify Me</span></button>
+        <h3 id="demoResultTitle">Scan complete.</h3>
+        <p id="demoResultText"></p>
+        <div class="demo-stats" id="demoStats"></div>
+        <p class="demo-stats-note" id="demoStatsNote"></p>
+
+        <div class="demo-gate">
+          <form id="demoLeadForm" class="demo-lead-form">
+            <h4>Get the complete report</h4>
+            <p>Every host and endpoint, algorithms and certificates in use, and what to fix first — as a web report and PDF, sent to your inbox.</p>
+            <div class="demo-fields">
+              <input type="text" id="demoName" class="demo-field" placeholder="Full name *" autocomplete="name" maxlength="100" required />
+              <input type="email" id="demoEmail" class="demo-field" placeholder="Work email *" autocomplete="email" maxlength="254" required />
+              <input type="text" id="demoCompany" class="demo-field" placeholder="Company *" autocomplete="organization" maxlength="100" required />
+              <input type="text" id="demoTitle" class="demo-field" placeholder="Job title" autocomplete="organization-title" maxlength="100" />
+              <input type="tel" id="demoPhone" class="demo-field demo-field-wide" placeholder="Phone number (optional)" autocomplete="tel" maxlength="30" />
+            </div>
+            <label class="demo-consent">
+              <input type="checkbox" id="demoConsent" required />
+              <span>I agree to Qripty contacting me about this report and its products. See our privacy policy. *</span>
+            </label>
+            <button type="submit" class="demo-btn demo-submit" id="demoLeadBtn"><span>Email Me the Full Report</span></button>
+            <p class="demo-hint" id="demoLeadError" style="color:#c0392b;" hidden></p>
+          </form>
+          <div class="demo-lead-done" id="demoLeadDone" hidden>
+            <h4>Report on its way</h4>
+            <p id="demoLeadDoneText"></p>
+          </div>
         </div>
-        <button type="button" class="demo-reset" id="demoReset">Scan another endpoint</button>
+        <button type="button" class="demo-reset" id="demoReset">Scan another domain</button>
       </div>
     </div>
   </div>

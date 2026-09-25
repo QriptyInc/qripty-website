@@ -304,72 +304,223 @@ export function initAnimations() {
 }
 
 // ---- Live scanner demo (Hero "Get Risk Assessment" scrolls here) ----
-// Front-end only for now: it validates input, runs a simulated scan
-// sequence, and lands on an email-capture state. What happens after
-// someone submits their email is intentionally left for later.
+// Two steps against the real public scanner at scan.qripty.com:
+//  1. the visitor submits a domain; we poll and show only a summary;
+//  2. to get the complete report they submit their details, and the scanner
+//     emails a tokenised link. The report is never shown on this site — the
+//     scanner refuses its report endpoints without that token.
+// Plain cross-origin fetch (the scanner allows this site's origin via CORS).
+// Overridable with PUBLIC_SCANNER_URL (see .env.development, which points
+// `npm run dev` at a local scanner); production builds use the hosted one.
+const SCANNER_URL = import.meta.env.PUBLIC_SCANNER_URL || 'https://scan.qripty.com';
+const SCAN_POLL_MS = 2500;
+
+// Mirrors the scanner's own domain validation (services/scanner/internal/handler/scan.go):
+// strips a pasted URL's scheme/path, then requires a bare hostname.
+const DOMAIN_RE = /^([a-zA-Z0-9](-?[a-zA-Z0-9])*\.)+[a-zA-Z]{2,}$/;
+function normalizeDomain(raw) {
+  let s = raw.trim().toLowerCase();
+  const schemeIdx = s.indexOf('://');
+  if (schemeIdx !== -1) s = s.slice(schemeIdx + 3);
+  const pathIdx = s.search(/[/?#]/);
+  if (pathIdx !== -1) s = s.slice(0, pathIdx);
+  return s.replace(/\.$/, '');
+}
+
 function initLiveDemo(reduced) {
   const form = document.getElementById('demoForm');
   if (!form) return;
 
-  const input = document.getElementById('demoInput');
-  const scanningEl = document.getElementById('demoScanning');
-  const statusEl = document.getElementById('demoScanStatus');
-  const resultEl = document.getElementById('demoResult');
-  const resetBtn = document.getElementById('demoReset');
-  const emailBtn = document.getElementById('demoEmailBtn');
+  const $ = (id) => document.getElementById(id);
+  const input = $('demoInput');
+  const errorEl = $('demoError');
+  const scanningEl = $('demoScanning');
+  const statusEl = $('demoScanStatus');
+  const resultEl = $('demoResult');
+  const statsEl = $('demoStats');
+  const leadForm = $('demoLeadForm');
+  const leadError = $('demoLeadError');
+  const leadDone = $('demoLeadDone');
+  let scanId = null;
 
-  const steps = [
-    'Connecting to endpoint…',
-    'Capturing the handshake…',
-    'Identifying algorithms…',
-    'Checking against NIST PQC standards…',
-    'Compiling your report…',
-  ];
+  // Progress bar: `target` is the scanner's reported percentage; the bar eases
+  // up to it and then creeps slowly (at most 8 points past it) so long stages
+  // like port probing still look alive. It never moves backwards.
+  const bar = $('demoProgress');
+  const barFill = $('demoProgressFill');
+  const barPct = $('demoProgressPct');
+  let shown = 0;
+  let target = 0;
+  let creep = null;
+  const setBar = (pct) => {
+    shown = pct;
+    barFill.style.width = `${pct}%`;
+    barPct.textContent = `${Math.round(pct)}%`;
+    bar.setAttribute('aria-valuenow', Math.round(pct));
+  };
+  const startProgress = () => {
+    clearInterval(creep);
+    target = 0;
+    setBar(0);
+    creep = setInterval(() => {
+      if (shown < target) setBar(Math.min(target, shown + Math.max(1, (target - shown) / 4)));
+      else if (shown < Math.min(target + 8, 99)) setBar(shown + 0.25);
+    }, 250);
+  };
+  const stopProgress = () => clearInterval(creep);
 
   const reveal = (el) => {
     el.hidden = false;
     if (!reduced) gsap.fromTo(el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
   };
 
-  form.addEventListener('submit', (e) => {
+  const showError = (message) => {
+    stopProgress();
+    scanningEl.hidden = true;
+    reveal(form);
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  };
+
+  // Summary only — the full report (hosts, algorithms, certificates, fixes) is
+  // emailed after the visitor gives their details.
+  function showSummary(domain, summary) {
+    const labels = summary.labels || {};
+    const notReady = labels['Not PQC Ready'] || 0;
+    const ready = (labels['PQC Ready'] || 0) + (labels['Fully Quantum Safe'] || 0);
+    const endpoints = summary.endpoints || 0;
+
+    $('demoResultTitle').textContent = `Scan complete for ${domain}`;
+    $('demoResultText').textContent =
+      endpoints === 0 ? 'We found no public TLS endpoints to assess.'
+      : notReady > 0 ? `${notReady} of ${endpoints} endpoints are not quantum-ready.`
+      : `All ${endpoints} endpoints are PQC ready.`;
+
+    statsEl.replaceChildren();
+    [
+      ['Hosts discovered', summary.hosts || 0, ''],
+      ['Endpoints inspected', endpoints, ''],
+      ['Not PQC ready', notReady, notReady > 0 ? 'warn' : ''],
+      ['PQC ready', ready, ready > 0 ? 'ok' : ''],
+    ].forEach(([label, value, tone]) => {
+      const card = document.createElement('div');
+      card.className = 'demo-stat' + (tone ? ` ${tone}` : '');
+      const b = document.createElement('b');
+      b.textContent = value;
+      const span = document.createElement('span');
+      span.textContent = label;
+      card.append(b, span);
+      statsEl.append(card);
+    });
+
+    const services = Object.entries(summary.services || {}).map(([type, n]) => `${n} ${type}`);
+    $('demoStatsNote').textContent = services.length ? `Services detected: ${services.join(' · ')}` : '';
+
+    leadForm.hidden = false;
+    leadDone.hidden = true;
+    leadError.hidden = true;
+    scanningEl.hidden = true;
+    reveal(resultEl);
+  }
+
+  async function pollScan(id, domain) {
+    let res, data;
+    try {
+      res = await fetch(`${SCANNER_URL}/scan/${id}`);
+      data = await res.json();
+    } catch {
+      showError('Lost connection to the scanner. Please try again.');
+      return;
+    }
+    if (!res.ok) {
+      showError(data.error || 'Scan lookup failed. Please try again.');
+      return;
+    }
+    if (data.status === 'done') {
+      stopProgress();
+      setBar(100);
+      setTimeout(() => showSummary(domain, data.summary || {}), reduced ? 0 : 700);
+      return;
+    }
+    if (data.status === 'failed') {
+      showError(data.error || 'Scan failed. Please try again.');
+      return;
+    }
+    if (typeof data.progress_pct === 'number') target = Math.max(target, data.progress_pct);
+    if (data.progress) statusEl.textContent = data.progress.charAt(0).toUpperCase() + data.progress.slice(1) + '…';
+    setTimeout(() => pollScan(id, domain), SCAN_POLL_MS);
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!input.value.trim()) { input.focus(); return; }
+    errorEl.hidden = true;
+    const domain = normalizeDomain(input.value);
+    if (!domain || !DOMAIN_RE.test(domain)) {
+      errorEl.textContent = 'Enter a valid domain, e.g. api.yourcompany.com.';
+      errorEl.hidden = false;
+      input.focus();
+      return;
+    }
 
     form.hidden = true;
     resultEl.hidden = true;
+    statusEl.textContent = 'Starting scan…';
     reveal(scanningEl);
+    startProgress();
 
-    let i = 0;
-    statusEl.textContent = steps[0];
-    const stepMs = reduced ? 250 : 650;
-    const interval = setInterval(() => {
-      i += 1;
-      if (i < steps.length) statusEl.textContent = steps[i];
-    }, stepMs);
-
-    setTimeout(() => {
-      clearInterval(interval);
-      scanningEl.hidden = true;
-      reveal(resultEl);
-    }, steps.length * stepMs + 300);
+    try {
+      const res = await fetch(`${SCANNER_URL}/scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not start the scan.');
+      scanId = data.scan_id;
+      pollScan(scanId, domain);
+    } catch (err) {
+      showError(err.message || 'Could not start the scan. Please try again.');
+    }
   });
 
-  resetBtn?.addEventListener('click', () => {
+  leadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    leadError.hidden = true;
+    const btn = $('demoLeadBtn');
+    btn.disabled = true;
+    const email = $('demoEmail').value.trim();
+    try {
+      const res = await fetch(`${SCANNER_URL}/scan/${scanId}/request-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: $('demoName').value.trim(),
+          email,
+          company: $('demoCompany').value.trim(),
+          job_title: $('demoTitle').value.trim(),
+          phone: $('demoPhone').value.trim(),
+          consent: $('demoConsent').checked,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not send the report.');
+      leadForm.hidden = true;
+      $('demoLeadDoneText').textContent = `We've emailed your full report to ${email}. It can take a minute or two to arrive — check spam if you don't see it.`;
+      reveal(leadDone);
+    } catch (err) {
+      leadError.textContent = err.message || 'Could not send the report. Please try again.';
+      leadError.hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('demoReset')?.addEventListener('click', () => {
     resultEl.hidden = true;
+    scanId = null;
     input.value = '';
     reveal(form);
     input.focus();
-  });
-
-  emailBtn?.addEventListener('click', () => {
-    const emailInput = document.getElementById('demoEmail');
-    if (emailInput && emailInput.value.trim()) {
-      const label = emailBtn.querySelector('span');
-      if (label) label.textContent = "You're on the list";
-      emailBtn.disabled = true;
-    } else {
-      emailInput?.focus();
-    }
   });
 }
 

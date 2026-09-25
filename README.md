@@ -133,25 +133,36 @@ a deliberate trade — it's the standard toolkit for this quality of motion
 
 ## The live demo section (`#demo`)
 All three "Get Risk Assessment" buttons (nav, hero, final CTA) scroll to
-`LiveDemo.astro`, an interactive scanner preview:
+`LiveDemo.astro`, which is wired to the real public scanner at
+`scan.qripty.com` (a separate service — see `qripty-scanner`):
 
-1. Someone pastes an API endpoint or spec URL and hits **Scan for Quantum
-   Risk**.
-2. A simulated scan runs — a spinning status ring and a short sequence of
-   status lines ("Connecting to endpoint…", "Identifying algorithms…", etc.),
-   currently just a timed sequence in `initLiveDemo()`
-   (`src/scripts/animations.js`).
-3. It lands on an email-capture state: "Your endpoint is queued — leave
-   your email and we'll send your report." Submitting just swaps the button
-   label; nothing is sent anywhere yet.
+1. Someone enters a domain and hits **Scan for Quantum Risk**.
+   `initLiveDemo()` (`src/scripts/animations.js`) normalizes and validates it,
+   `POST`s it to `${SCANNER_URL}/scan`, and polls `GET /scan/{id}` every 2.5s
+   showing the scanner's own `progress` text.
+2. When the scan is done the page shows **only a summary** from the scan's
+   `summary` (hosts discovered, endpoints inspected, not-PQC-ready vs
+   PQC-ready counts, services detected). The scanner's public scan JSON
+   deliberately leaves out the host list.
+3. Below the summary, a "Get the complete report" form collects name, work
+   email, company (required), job title and phone (optional) and a consent
+   checkbox (required), and `POST`s it to `/scan/{id}/request-report`. The
+   scanner stores the lead and **emails** a tokenised link to the HTML/PDF
+   report. The report is never shown on the site — its endpoints return 404
+   without that token. Errors (invalid domain, rate limit, failed scan,
+   invalid details) show inline.
 
-This is deliberately front-end only — the interaction is real and live,
-but no actual scanning happens and no email is stored. **When you're ready
-to wire up real scanning:** replace the `setTimeout`-based sequence in
-`initLiveDemo()` with a real request to your scanning service, and swap the
-`#demoResult` panel's content for actual results once you've designed what
-those should look like. The surrounding markup, styles, and states
-(`#demoForm` → `#demoScanning` → `#demoResult`) don't need to change.
+`SCANNER_URL` (`https://scan.qripty.com`) is a constant near the top of
+`animations.js`, overridable with `PUBLIC_SCANNER_URL`; `.env.development` sets it
+to `http://localhost:8080` so `npm run dev` talks to a local scanner
+(`docker compose up` in `qripty-scanner/services/scanner`) — delete that file to
+dev against the hosted scanner. The scanner allows this site's origin via CORS (see its
+`internal/handler/cors.go`) — update the allowlist there if this site's
+domain changes. The scanner is public and unauthenticated but rate-limits
+by IP; a submission past that limit surfaces as an inline error. Scanning a
+domain that was scanned in the last 24h simply returns that scan, so two
+colleagues asking about the same domain share one scan and each gets their own
+emailed report.
 
 ## Multiple pages
 The site is no longer a single page — `/`, `/about`, `/contact`, and `/blog`
