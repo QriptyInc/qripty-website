@@ -5,12 +5,10 @@ node_modules/
 dist/
 .astro/
 
-# local env files (secrets / per-machine). .env.development is committed: it
-# only points `npm run dev` at a local scanner and holds no secrets.
-.env
+# local env files (secrets / per-machine overrides). .env and .env.development
+# are committed: they hold only non-secret public config.
 .env.local
 .env.*.local
-.env.production
 
 # Vercel CLI link and local settings
 .vercel/

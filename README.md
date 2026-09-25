@@ -153,8 +153,8 @@ All three "Get Risk Assessment" buttons (nav, hero, final CTA) scroll to
    invalid details) show inline.
 
 `SCANNER_URL` (`https://scan.qripty.com`) is a constant near the top of
-`animations.js`, overridable with `PUBLIC_SCANNER_URL`; `.env.development` sets it
-to `http://localhost:8080` so `npm run dev` talks to a local scanner
+`animations.js`, overridable with `PUBLIC_SCANNER_URL`: `.env` sets it to the hosted scanner
+for every mode and `.env.development` overrides it to `http://localhost:8080` so `npm run dev` talks to a local scanner
 (`docker compose up` in `qripty-scanner/services/scanner`) — delete that file to
 dev against the hosted scanner. The scanner allows this site's origin via CORS (see its
 `internal/handler/cors.go`) — update the allowlist there if this site's
