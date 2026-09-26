@@ -152,6 +152,12 @@ All three "Get Risk Assessment" buttons (nav, hero, final CTA) scroll to
    without that token. Errors (invalid domain, rate limit, failed scan,
    invalid details) show inline.
 
+The emailed link opens `/report?scan=…&token=…` (`src/pages/report.astro`), a
+static page that fetches `${SCANNER_URL}/scan/{id}/assets?token=…` in the browser
+and renders the whole report in the site's own theme. The page is `noindex` and
+sends no Referer (the token is in the URL), and everything from the scanner is
+inserted as text, never HTML. The PDF and CBOM are still served by the scanner.
+
 `SCANNER_URL` (`https://scan.qripty.com`) is a constant near the top of
 `animations.js`, overridable with `PUBLIC_SCANNER_URL`: `.env` sets it to the hosted scanner
 for every mode and `.env.development` overrides it to `http://localhost:8080` so `npm run dev` talks to a local scanner

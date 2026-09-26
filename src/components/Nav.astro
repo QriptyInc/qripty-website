@@ -1,3 +1,11 @@
+---
+// ctaHref: where "Get Risk Assessment" goes. Defaults to the standalone
+// /scan page; the homepage overrides it to scroll to its own #demo section.
+export interface Props {
+  ctaHref?: string;
+}
+const { ctaHref = '/scan' } = Astro.props;
+---
 <!-- NAV -->
 <nav id="nav">
   <a href="/" class="brand">
@@ -13,6 +21,6 @@
     <a href="/#faq">FAQ</a>
   </div>
   <div class="nav-actions">
-    <a href="/#demo" class="btn-primary">Get Risk Assessment</a>
+    <a href={ctaHref} class="btn-primary">Get Risk Assessment</a>
   </div>
 </nav>

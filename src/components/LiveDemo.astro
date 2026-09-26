@@ -1,11 +1,21 @@
-<!-- LIVE DEMO — the interactive scanner preview -->
+---
+// `standalone` (from /scan) skips the section header below, since that
+// page's own hero already covers the same copy.
+export interface Props {
+  standalone?: boolean;
+}
+const { standalone = false } = Astro.props;
+---
+<!-- LIVE DEMO — the interactive scanner -->
 <section id="demo" class="demo-section">
   <div class="section-inner">
-    <div class="section-header center">
-      <div class="eyebrow">Try It Live</div>
-      <h2 class="section-headline">See your API's quantum exposure — right now.</h2>
-      <p class="section-sub">Enter your domain below. Qripty discovers your internet-facing hosts and scans their cryptography — no install, no access to your infrastructure.</p>
-    </div>
+    {!standalone && (
+      <div class="section-header center">
+        <div class="eyebrow">Try It Live</div>
+        <h2 class="section-headline">See your API's quantum exposure — right now.</h2>
+        <p class="section-sub">Enter your domain below. Qripty discovers your internet-facing hosts and scans their cryptography — no install, no access to your infrastructure.</p>
+      </div>
+    )}
 
     <div class="demo-card reveal">
       <form class="demo-form" id="demoForm">

@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import LiveDemo from '../components/LiveDemo.astro';
+import Footer from '../components/Footer.astro';
+---
+<Layout title="Free PQC Risk Scan — Qripty" description="Scan any domain for post-quantum readiness in minutes. See a summary instantly; get the full report, findings and fixes emailed to you.">
+  <Nav />
+
+  <div class="page-hero">
+    <div class="eyebrow">Free Quantum Risk Scan</div>
+    <h1>See your API's quantum exposure — right now.</h1>
+    <p>Enter a domain below. Qripty discovers its internet-facing hosts, scans their cryptography, and shows you a summary in under a minute — no install, no access to your infrastructure.</p>
+  </div>
+
+  <LiveDemo standalone />
+
+  <Footer />
+</Layout>
